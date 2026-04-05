@@ -1,0 +1,17 @@
+{
+  "name": "naver-blog-analyzer",
+  "version": "1.0.0",
+  "description": "Naver Blog Analyzer for Optimization",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@google/genai": "^1.48.0",
+    "axios": "^1.6.8",
+    "cheerio": "^1.2.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  }
+}

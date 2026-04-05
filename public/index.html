@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>블로그 인사이트 AI 코치</title>
+    <!-- 고급스러운 본문 폰트 적용 (Pretendard) -->
+    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 뒷배경의 부드럽게 움직이는 다크 테마 효과 -->
+    <div class="background-shapes">
+        <div class="shape circle-1"></div>
+        <div class="shape circle-2"></div>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1><span class="gradient-text">블로그 AI 최적화</span> 코치</h1>
+            <p>상위 노출 블로그의 패턴을 분석하고, 내 블로그 글을 AI에게 코칭받아보세요.</p>
+        </header>
+
+        <!-- 탭 메뉴 -->
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="tab-analyze">1. 상위 블로그 분석</button>
+            <button class="tab-btn" data-tab="tab-coach">2. 내 블로그 초안 코칭</button>
+        </div>
+
+        <!-- 탭 1: 상위 블로그 분석 -->
+        <div id="tab-analyze" class="tab-content active">
+            <div class="search-box glass-panel">
+                <input type="text" id="keyword-input" placeholder="최적화할 타겟 키워드를 입력하세요 (예: 눈 영양제 추천)" autocomplete="off">
+                <button id="search-btn" title="분석 시작">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- 로딩 애니메이션 -->
+            <div id="analyze-loading" class="hidden loading-indicator">
+                <div class="spinner"></div>
+                <p>에이전트가 수십 개의 블로그를 분석하여 최적화 공식을 추출하고 있습니다... (최대 1~2분 소요)</p>
+            </div>
+
+            <!-- 분석 결과 패널 -->
+            <div id="analyze-result" class="glass-panel hidden result-panel">
+                <h2>📊 AI 최적화 리포트</h2>
+                <div class="report-section">
+                    <h3>🎯 키워드 밀도 & 배치 패턴</h3>
+                    <p id="report-density"></p>
+                </div>
+                <div class="report-section">
+                    <h3>💡 공통 LSI 테마 (세부 연관 주제)</h3>
+                    <ul id="report-topics" class="tag-list"></ul>
+                </div>
+                <div class="report-section">
+                    <h3>✍️ 주요 작성 의도</h3>
+                    <p id="report-intent"></p>
+                </div>
+                <div class="report-section important">
+                    <h3>🏆 상위 노출 필수 가이드라인 3가지</h3>
+                    <ol id="report-guidelines"></ol>
+                </div>
+                <div class="report-section important">
+                    <h3>🏆 Top 10 블로그별 상위 노출 분석 결과</h3>
+                    <div id="report-ranking-reasons" class="results-grid" style="margin-top: 1rem;"></div>
+                </div>
+                <!-- 저장해두기용 (숨김 처리) -->
+                <textarea id="hidden-guidelines" style="display:none;"></textarea>
+            </div>
+        </div>
+
+        <!-- 탭 2: 내 블로그 코칭 -->
+        <div id="tab-coach" class="tab-content">
+            <div class="coach-container glass-panel">
+                <h2>나의 블로그 초안 진단받기</h2>
+                <p class="desc">1단계에서 추출한 상위 노출 필수 가이드라인을 기준으로 에이전트가 코칭을 진행합니다.</p>
+                
+                <textarea id="draft-input" placeholder="이곳에 나만의 블로그 글 초안을 붙여넣으세요..."></textarea>
+                
+                <button id="coach-btn" class="primary-btn">AI 코칭 시작</button>
+            </div>
+
+            <!-- 로딩 애니메이션 -->
+            <div id="coach-loading" class="hidden loading-indicator">
+                <div class="spinner"></div>
+                <p>코칭 에이전트가 가이드라인에 맞추어 초안을 교정하고 있습니다...</p>
+            </div>
+
+            <!-- 코칭 결과 -->
+            <div id="coach-result" class="glass-panel hidden result-panel">
+                <div class="score-banner">
+                    <span class="score-label">최적화 점수</span>
+                    <span class="score-value" id="coach-score">0</span>
+                    <span class="score-max">/ 100</span>
+                </div>
+                
+                <div class="report-section">
+                    <h3>✨ 잘된 점</h3>
+                    <ul id="coach-praise"></ul>
+                </div>
+                
+                <div class="report-section warning">
+                    <h3>🛠️ 개선이 필요한 부분 및 구체적 제안</h3>
+                    <ul id="coach-improvements" class="improvement-list"></ul>
+                </div>
+                
+                <div class="report-section highlight">
+                    <h3>🔥 AI 추천 클릭률(CTR) 상승 제목</h3>
+                    <ul id="coach-titles" class="title-list"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 동작을 담당하는 자바스크립트 파일 연결 -->
+    <script src="app.js"></script>
+</body>
+</html>
