@@ -44,27 +44,46 @@ ${draft}
   "suggestedTitles": ["[전략명] 추천제목1", "[전략명] 추천제목2", "[전략명] 추천제목3"]
 }`;
 
-    try {
-        const response = await ai.models.generateContent({
-            model: 'gemini-3.1-flash-lite-preview',
-            contents: promptText,
-            config: {
-                temperature: 0.5,
-            }
-        });
-        
-        let responseText = response.text;
-        
-        if (responseText.startsWith('```json')) {
-            responseText = responseText.replace(/```json\n?/, '').replace(/```\n?$/, '').trim();
-        } else if (responseText.startsWith('```')) {
-            responseText = responseText.replace(/```\n?/, '').replace(/```\n?$/, '').trim();
-        }
+    let attempts = 0;
+    const maxAttempts = 3;
+    const retryDelay = 2000;
 
-        return JSON.parse(responseText);
-    } catch (error) {
-        console.error('LLM Coach Error:', error);
-        throw new Error('코칭 API 오류: ' + (error.message || '알 수 없는 오류'));
+    while (attempts < maxAttempts) {
+        try {
+            const response = await ai.models.generateContent({
+                model: 'gemini-3.1-flash-lite-preview',
+                contents: promptText,
+                config: {
+                    temperature: 0.5,
+                }
+            });
+            
+            let responseText = response.text;
+            
+            if (responseText.startsWith('```json')) {
+                responseText = responseText.replace(/```json\n?/, '').replace(/```\n?$/, '').trim();
+            } else if (responseText.startsWith('```')) {
+                responseText = responseText.replace(/```\n?/, '').replace(/```\n?$/, '').trim();
+            }
+
+            return JSON.parse(responseText);
+        } catch (error) {
+            attempts++;
+            console.error(`LLM Coach Attempt ${attempts} failed:`, error.message);
+            
+            const isTransient = error.message.includes('503') || error.message.includes('Service Unavailable') || error.message.includes('high demand');
+            
+            if (isTransient && attempts < maxAttempts) {
+                console.log(`Wait ${retryDelay * attempts}ms before retrying due to high demand...`);
+                await new Promise(resolve => setTimeout(resolve, retryDelay * attempts));
+                continue;
+            }
+            
+            if (attempts >= maxAttempts) {
+                throw new Error('코칭 API 오류 (최대 재시도 초과): ' + (error.message || '알 수 없는 오류'));
+            }
+            throw error;
+        }
     }
 }
 

@@ -60,29 +60,47 @@ ${blogs.map(blog => `
   ]
 } (실제 데이터의 모든 랭킹(1~10위)을 위 형식으로 반드시 상세히 채워 넣으세요)`;
 
-    try {
-        // gemini-2.5-flash or gemini-2.0-flash is standard. Assuming user has access.
-        const response = await ai.models.generateContent({
-            model: 'gemini-3.1-flash-lite-preview',
-            contents: promptText,
-            config: {
-                temperature: 0.3,
-            }
-        });
-        
-        let responseText = response.text;
-        
-        // Remove markdown JSON codeblocks if present
-        if (responseText.startsWith('```json')) {
-            responseText = responseText.replace(/```json\n?/, '').replace(/```\n?$/, '').trim();
-        } else if (responseText.startsWith('```')) {
-            responseText = responseText.replace(/```\n?/, '').replace(/```\n?$/, '').trim();
-        }
+    let attempts = 0;
+    const maxAttempts = 3;
+    const retryDelay = 2000; // 2 seconds
 
-        return JSON.parse(responseText);
-    } catch (error) {
-        console.error('LLM Analyzer Error:', error);
-        throw new Error('분석 API 오류: ' + (error.message || '알 수 없는 오류'));
+    while (attempts < maxAttempts) {
+        try {
+            const response = await ai.models.generateContent({
+                model: 'gemini-3.1-flash-lite-preview',
+                contents: promptText,
+                config: {
+                    temperature: 0.3,
+                }
+            });
+            
+            let responseText = response.text;
+            
+            if (responseText.startsWith('```json')) {
+                responseText = responseText.replace(/```json\n?/, '').replace(/```\n?$/, '').trim();
+            } else if (responseText.startsWith('```')) {
+                responseText = responseText.replace(/```\n?/, '').replace(/```\n?$/, '').trim();
+            }
+
+            return JSON.parse(responseText);
+        } catch (error) {
+            attempts++;
+            console.error(`LLM Analyzer Attempt ${attempts} failed:`, error.message);
+            
+            // Check if it's a transient error (like 503 Service Unavailable)
+            const isTransient = error.message.includes('503') || error.message.includes('Service Unavailable') || error.message.includes('high demand');
+            
+            if (isTransient && attempts < maxAttempts) {
+                console.log(`Wait ${retryDelay}ms before retrying due to high demand...`);
+                await new Promise(resolve => setTimeout(resolve, retryDelay * attempts)); // Exponentially wait
+                continue;
+            }
+            
+            if (attempts >= maxAttempts) {
+                throw new Error('분석 API 오류 (최대 재시도 초과): ' + (error.message || '알 수 없는 오류'));
+            }
+            throw error;
+        }
     }
 }
 
