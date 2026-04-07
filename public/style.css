@@ -63,6 +63,7 @@ h1 { font-size: 2.8rem; font-weight: 800; margin-bottom: 0.8rem; letter-spacing:
 .gradient-text {
     background: linear-gradient(135deg, #A78BFA, #38BDF8);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
@@ -142,9 +143,22 @@ input::placeholder { color: #64748B; }
 #search-btn { width: 70px; display: flex; align-items: center; justify-content: center; }
 .primary-btn { padding: 1rem 2rem; width: 100%; margin-top: 1rem; }
 
-#search-btn:hover, .primary-btn:hover {
+#search-btn:hover, .primary-btn:hover, .secondary-btn:hover {
     transform: scale(1.02);
     box-shadow: 0 5px 20px rgba(139, 92, 246, 0.4);
+}
+
+.secondary-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.secondary-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
 }
 
 /* Result Panels */

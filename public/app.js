@@ -87,6 +87,22 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.key === 'Enter') startAnalysis();
     });
 
+    // "이 가이드로 코칭받기" 버튼 로직
+    const copyToCoachBtn = document.getElementById('copy-to-coach-btn');
+    if (copyToCoachBtn) {
+        copyToCoachBtn.addEventListener('click', () => {
+            // 이미 분석 결과가 있는 상태이므로 탭만 전환해주면 됨
+            // hidden-guidelines는 renderAnalysisReport에서 이미 채워짐
+            const coachTab = Array.from(tabs).find(t => t.dataset.tab === 'tab-coach');
+            if (coachTab) {
+                coachTab.click();
+                draftInput.focus();
+                // 살짝 스크롤 내려주기
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+    }
+
     // Render logic for Analysis
     function renderAnalysisReport(report) {
         document.getElementById('report-density').textContent = report.keywordDensity || '정보 없음';
