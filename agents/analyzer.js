@@ -26,6 +26,7 @@ async function analyzeCompetitors(keyword, blogs) {
 ${blogs.map(blog => `
 [랭킹 ${blog.rank}위]
 제목: ${blog.title}
+링크: ${blog.link}
 본문: ${blog.content.substring(0, 4000)}...
 `).join('\n')}
 [데이터 끝]
@@ -54,7 +55,7 @@ ${blogs.map(blog => `
     { 
       "rank": 1, 
       "title": "제목", 
-      "link": "${blogs[0]?.link || ''}", 
+      "link": "데이터에 제공된 해당 블로그의 실제 링크", 
       "reason": "키워드 배치, 정보의 밀도, 하위 순위 대비 결정적 차별점(Killer Factor)을 포함한 심층 분석" 
     }
   ]

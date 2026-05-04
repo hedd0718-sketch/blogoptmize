@@ -145,7 +145,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 report.blogRankingReasons.forEach(item => {
                     const card = document.createElement('a');
                     card.className = 'blog-card glass-panel';
-                    card.href = item.link || '#';
+                    const validLink = (item.link && item.link !== 'N/A' && item.link.startsWith('http')) ? item.link : '#';
+                    card.href = validLink;
+                    if (validLink === '#') {
+                        card.style.cursor = 'default';
+                        card.addEventListener('click', (e) => e.preventDefault());
+                    }
                     card.target = '_blank';
                     card.style.display = 'block';
                     card.style.textDecoration = 'none';
